@@ -23,7 +23,7 @@
 set nocompatible              
 
 " Sets how many lines of history VIM has to remember
-set history=700
+set history=1000
 
 " Enable filetype plugins
 filetype plugin on
@@ -182,27 +182,11 @@ map k gk
 map <space> /
 "map <c-space> ? " Since this conflicts with input method
 
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
 " Close the current buffer
 map <leader>bd :Bclose<cr>
 
 " Close all the buffers
 map <leader>ba :1,1000 bd!<cr>
-
-" Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
-map <leader>to :tabonly<cr>
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-
-map <leader>qq :q!<CR>
-map <leader>wq :wq<CR>
-map <leader>wqa :wqa<CR>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -600,3 +584,27 @@ nnoremap qq :q<CR>
 nnoremap q! :q!<CR>
 nnoremap wq :wq<CR>
 nnoremap wqa :wqa<CR>
+nnoremap qa :qa<CR>
+"map <leader>qq :q!<CR>
+"map <leader>wq :wq<CR>
+"map <leader>wqa :wqa<CR>
+
+
+"------------------------- syntastic ------------------------
+execute pathogen#infect()
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_python_checkers = ['pylint']
+let g:syntastic_sh_checkers = ['shellcheck']
+
+let g:syntastic_disabled_filetypes=['sh']
+let g:syntastic_disabled_filetypes=['python']
+
+let g:syntastic_mode_map = {'mode':'passive'}
+nnoremap <F10> :SyntasticCheck<CR> :SyntasticToggleMode<CR> :w<CR>
