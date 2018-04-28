@@ -77,7 +77,7 @@ hi Search guibg=Yellow guifg=Black ctermbg=Yellow ctermfg=Black
 " Makes search act like search in modern browsers
 set incsearch
 
-" Don't redraw while executing macros (good performance config)
+" Don't redraw while executing macros \(good performance config\)
 set lazyredraw
 
 " For regular expressions turn magic on
@@ -107,7 +107,7 @@ set clipboard=unnamedplus
 syntax enable
 
 " cursorcolumn
-set cursorcolumn
+" set cursorcolumn "column higlight
 "hi CursorColumn cterm=NONE ctermbg=darkgrey ctermfg=white
 
 " Set extra options when running in GUI mode
@@ -411,6 +411,8 @@ Plugin 'sjl/gundo.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
+Plugin 'inkarkat/vim-mark' 
+Plugin 'inkarkat/vim-ingo-library'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -515,6 +517,7 @@ let g:airline#extensions#tabline#enabled = 1
 "" default theme not work with tmux
 "let g:airline_theme='wombat'
 
+
 "---------------------- Ctags ---------------------------------
 " update taglist
 "map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
@@ -527,6 +530,18 @@ set tags+=~/ctags/ucloud/message.tags
 set tags+=~/ctags/ucloud/aioplug.tags
 set tags+=~/ctags/ucloud/udb.tags
 
+"----------------------- mark --------------------------------
+"used to mark several words with different color at the same time
+" ,s to mark
+" ,c to clear the mark
+" ,/ to jump to next any mark
+" .* to jump to next mark
+" :MarkClear to clear all marks
+
+"----------------------- jedi-vim ----------------------------
+"used to python autocomplete
+let g:jedi#force_py_version = 3
+let g:deoplete#sources#jedi#python_path = '/usr/local/python3/bin/python3'
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
 autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc exec ":call SetTitle()"
@@ -543,13 +558,13 @@ let g:vim_markdown_frontmatter=1
 "------------------------- Python Support ----------------------
 autocmd BufRead *.py set makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
 autocmd BufRead *.py set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
-autocmd BufRead *.py nmap <F5> :!python -i %<CR>
+autocmd BufRead *.py nmap <F5> :!python %<CR>
 autocmd BufRead *.py set tabstop=4
 autocmd BufRead *.py set nowrap
 autocmd BufRead *.py set go+=b
 
 "------------------- Bash Support------------------------------
-autocmd BufRead *.sh nmap <F7> :!bash %<CR>
+autocmd BufRead *.sh nmap <F2> :!bash %<CR>
 
 "-------------------  vim-flake8 ------------------------------
 autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
