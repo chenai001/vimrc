@@ -357,8 +357,8 @@ endfunction
 
 " Function: SetTitle
 " Automatically insert file header
-func! SetTitle()
-    if &filetype == 'sh'
+func SetTitle()
+    if &filetype == '*.sh'
         call setline(1, "\#!/bin/bash")
         call append(line("."), "\ ")
         call append(line(".")+1, "\#########################################################################")
@@ -367,7 +367,7 @@ func! SetTitle()
         call append(line(".")+4, "\# Description: ")
         call append(line(".")+5, "\#########################################################################")
         call append(line(".")+6, "")
-    elseif &filetype == 'python'
+    elseif &filetype == '.py'
         call setline(1, "\#!/usr/bin/python")
         call append(line("."), "\# -*- coding: utf-8 -*-")
         call append(line(".")+1, "\ ")
@@ -413,6 +413,9 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'vim-airline/vim-airline'
 Plugin 'inkarkat/vim-mark' 
 Plugin 'inkarkat/vim-ingo-library'
+Plugin 'davidhalter/jedi-vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'vim-syntastic/syntastic'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -466,7 +469,7 @@ map <F6> :so $MYVIMRC<cr>
 let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
-let g:ycm_server_python_interpreter = "/usr/bin/python2"
+let g:ycm_server_python_interpreter = "/usr/bin/python"
 
 "let g:global_ycm_extra_conf = ""
 "let g:ycm_confirm_extra_conf=0
@@ -477,11 +480,6 @@ autocmd InsertLeave * if pumvisible() == 0|pclose|endif
 "let g:ycm_collect_identifiers_from_tags_files=1
 
 " this is the only way I find to disable semantic completion engine for C family(otherwise, '.', '->', ':' will trigger semantic completion for C family, which will somehow blocks)
-"let g:ycm_filetype_specific_completion_to_disable = {
-"    \ 'gitcommit': 1,
-"    \ 'c': 1,
-"    \ 'cpp': 1,
-"    \}
 
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
@@ -541,7 +539,7 @@ set tags+=~/ctags/ucloud/udb.tags
 "----------------------- jedi-vim ----------------------------
 "used to python autocomplete
 let g:jedi#force_py_version = 3
-let g:deoplete#sources#jedi#python_path = '/usr/local/python3/bin/python3'
+let g:deoplete#sources#jedi#python_path = '/usr/bin/python'
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
 autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc exec ":call SetTitle()"
@@ -623,3 +621,4 @@ let g:syntastic_disabled_filetypes=['python']
 
 let g:syntastic_mode_map = {'mode':'passive'}
 nnoremap <F10> :SyntasticCheck<CR> :SyntasticToggleMode<CR> :w<CR>
+
