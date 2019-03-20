@@ -21,9 +21,10 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " be iMproved, required by lots of plugins!
 set nocompatible              
+set shell=/bin/zsh
 
 " Sets how many lines of history VIM has to remember
-set history=1000
+set history=10000
 
 " Enable filetype plugins
 filetype plugin on
@@ -48,6 +49,8 @@ vnoremap . :norm.<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set cursorline
+" set cursorcolumn
 " Set 7 lines to the cursor - when moving vertically using j/k
 set scrolloff=7
 
@@ -357,8 +360,8 @@ endfunction
 
 " Function: SetTitle
 " Automatically insert file header
-func SetTitle()
-    if &filetype == '*.sh'
+func! SetTitle()
+    if &filetype == 'sh'
         call setline(1, "\#!/bin/bash")
         call append(line("."), "\ ")
         call append(line(".")+1, "\#########################################################################")
@@ -367,7 +370,7 @@ func SetTitle()
         call append(line(".")+4, "\# Description: ")
         call append(line(".")+5, "\#########################################################################")
         call append(line(".")+6, "")
-    elseif &filetype == '.py'
+    elseif &filetype == 'python'
         call setline(1, "\#!/usr/bin/python")
         call append(line("."), "\# -*- coding: utf-8 -*-")
         call append(line(".")+1, "\ ")
@@ -399,7 +402,6 @@ filetype off                  " required
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
 Plugin 'gmarik/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'godlygeek/tabular'
@@ -410,12 +412,21 @@ Plugin 'vim-scripts/TaskList.vim'
 Plugin 'sjl/gundo.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'flazz/vim-colorschemes'
-Plugin 'vim-airline/vim-airline'
+" Plugin 'vim-airline/vim-airline'
 Plugin 'inkarkat/vim-mark' 
 Plugin 'inkarkat/vim-ingo-library'
 Plugin 'davidhalter/jedi-vim'
-Plugin 'Valloric/YouCompleteMe'
+" Plugin 'Valloric/YouCompleteMe'
 Plugin 'vim-syntastic/syntastic'
+Plugin 'jshint/jshint'
+Plugin 'tpope/vim-commentary'
+Plugin 'fatih/vim-go'
+Plugin 'soramugi/auto-ctags.vim'
+Plugin 'majutsushi/tagbar'
+Plugin 'jstemmer/gotags'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'Blackrush/vim-gocode'
+"Plugin 'gryf/pylint-vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -469,7 +480,7 @@ map <F6> :so $MYVIMRC<cr>
 let g:ycm_server_use_vim_stdout = 0
 let g:ycm_server_keep_logfiles = 1
 let g:ycm_server_log_level = 'debug'
-let g:ycm_server_python_interpreter = "/usr/bin/python"
+let g:ycm_server_python_interpreter = "/usr/local/python3/bin/python3"
 
 "let g:global_ycm_extra_conf = ""
 "let g:ycm_confirm_extra_conf=0
@@ -499,6 +510,36 @@ nnoremap <silent> <F9> :TlistToggle<cr>
 let Tlist_Exit_OnlyWindow=1
 let Tlist_Show_One_File=1
 
+"---------------------- Tagbar -----------------------------
+nnoremap <silent> <F8> :TagbarToggle<cr>
+let g:tagbar_type_go = {
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : {
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : {
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+    \ }
+
 "---------------------- WinManager -----------------------------
 let g:winManagerWindowLayout='FileExplorer|TagList'
 let g:winManagerWidth = 40
@@ -508,9 +549,9 @@ nmap wm :WMToggle<cr>
 let g:powerline_pycmd='py3'
 
 "---------------------- Airline -------------------------------
-set laststatus=2
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
+" set laststatus=2
+" let g:airline_powerline_fonts = 1
+" let g:airline#extensions#tabline#enabled = 1
 "set t_Co=256" Make terminal has 256 colors
 "" default theme not work with tmux
 "let g:airline_theme='wombat'
@@ -518,15 +559,38 @@ let g:airline#extensions#tabline#enabled = 1
 
 "---------------------- Ctags ---------------------------------
 " update taglist
-"map <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
-"imap <F4> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR><CR> :TlistUpdate<CR>
+" Show defination in new tab
+"
+" Ctrl+] - go to definition
+" Ctrl+T - Jump back from the definition.
+" Ctrl+W Ctrl+] - Open the definition in a horizontal split
+
+" Add these lines in vimrc
+" map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+" map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+" Ctrl+\ - Open the definition in a new tab
+" Alt+] - Open the definition in a vertical split
+"
+map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>     
+map <M-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
+let g:auto_ctags = 1
+let g:auto_ctags_directory_list = ['.git', '.svn']
+let g:auto_ctags_tags_name = 'tags'
+let g:auto_ctags_tags_args = ['--tag-relative=yes', '--recurse=yes', '--sort=yes']
+let g:auto_ctags_filetype_mode = 1
+
+nnoremap <F4> :!ctags -R --c-kinds=+p --c++-kinds=+p --go-kinds=+p --fields=+iaS --extra=+q .<CR> :TlistUpdate<CR>
+" imap <F4> <ESC>:!ctags -R --c-kinds=+p --c++-kinds=+p --fields=+iaS --extra=+q .<CR> :TlistUpdate<CR>
 set tags=tags
-set tags+=~/ctags/system.tags
-"set tags+=~/ctags/linux-headers.tags
-set tags+=~/ctags/ucloud/wiwo.tags
-set tags+=~/ctags/ucloud/message.tags
-set tags+=~/ctags/ucloud/aioplug.tags
-set tags+=~/ctags/ucloud/udb.tags
+" set tags+=~/ctags/system.tags
+" set tags+=~/ctags/linux-headers.tags
+set tags+=~/wiwo/tags
+set tags+=~/message/tags
+" set tags+=~/ctags/ucloud/aioplug.tags
+set tags+=~/udb/tags
+set tags+=/usr/include/tags
 
 "----------------------- mark --------------------------------
 "used to mark several words with different color at the same time
@@ -539,10 +603,18 @@ set tags+=~/ctags/ucloud/udb.tags
 "----------------------- jedi-vim ----------------------------
 "used to python autocomplete
 let g:jedi#force_py_version = 3
+let g:jedi#completions_enabled = 1
 let g:deoplete#sources#jedi#python_path = '/usr/bin/python'
+let g:jedi#goto_command = "<leader>m"
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = "<leader>d"
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
 "------------------------- File Header ------------------------
 " New created .c, .h, .sh, .java, .py files, automatically insert file header
-autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc exec ":call SetTitle()"
+" autocmd BufNewFile *.[ch],*.sh,*.java,*.py,*.cpp,*cc exec ":call SetTitle()"
 " After insertion, jump to the next line
 autocmd BufNewFile * normal G
 
@@ -565,7 +637,7 @@ autocmd BufRead *.py set go+=b
 autocmd BufRead *.sh nmap <F2> :!bash %<CR>
 
 "-------------------  vim-flake8 ------------------------------
-autocmd FileType python map <buffer> <F8> :call Flake8()<CR>
+autocmd FileType python map <buffbarF8> :call Flake8()<CR>
 
 "------------------------- code folding -----------------------
 "set foldmethod=indent
@@ -610,15 +682,21 @@ set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_sh_checkers = ['shellcheck']
+let g:syntastic_javascript_checkers = ['jshint']
 
 let g:syntastic_disabled_filetypes=['sh']
-let g:syntastic_disabled_filetypes=['python']
+let g:syntastic_disabled_filetypes=['python3']
+let g:syntastic_disabled_filetypes=['javascript']
 
-let g:syntastic_mode_map = {'mode':'passive'}
-nnoremap <F10> :SyntasticCheck<CR> :SyntasticToggleMode<CR> :w<CR>
+let g:syntastic_mode_map = {
+    \ 'mode':'active',
+    \ 'active_filetypes': ['python', 'sh', 'javascript']}
+nnoremap <F11> :SyntasticCheck<CR> :SyntasticToggleMode<CR> :w<CR>
 
+" ----------------------------GOLANG------------------
+let g:go_autodetect_gopath = 0
